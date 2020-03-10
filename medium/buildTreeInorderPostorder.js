@@ -6,29 +6,27 @@
  * }
  */
 /**
- * @param {number[]} inorder
- * @param {number[]} postorder
+ * @param {number[]} pre
+ * @param {number[]} post
  * @return {TreeNode}
  */
-var buildTree = function(inorder, postorder) {
-    if(inorder.length == 0 || postorder.length == 0) return null;
-    let value = postorder[postorder.length-1];
-    let root = new TreeNode(value);//post last element is root
-    if(postorder.length == 1) return root;
-    //find root in inorder traversal
+var constructFromPrePost = function(pre, post) {
+    if(pre.length == 0 || post.length == 0) return null;
+    let root = new TreeNode(pre[0]);
+    if(pre.length == 1) return root;
+    let pre_left = [],pre_right = [],post_left = [],post_right = [];
+    let value = pre[1];
     let idx = 0;
-    while(inorder[idx] != value) idx++;
-    let in_left = [],in_right = [],post_left = [],post_right = [];
-    for(let i = 0; i < idx; i++){
-        in_left.push(inorder[i]);
-        post_left.push(postorder[i]);
+    while(post[idx] != value) idx++;
+    for(let i = 0; i <= idx; i++){
+        pre_left.push(pre[i+1]);
+        post_left.push(post[i]);
     }
-    for(let i = idx + 1; i < inorder.length; i++){
-        in_right.push(inorder[i]);
-        post_right.push(postorder[i-1]);
+    for(let i = idx + 1; i < pre.length - 1; i++){
+        pre_right.push(pre[i+1]);
+        post_right.push(post[i]);
     }
-    root.left = buildTree(in_left,post_left);
-    root.right = buildTree(in_right,post_right);
+    root.left = constructFromPrePost(pre_left,post_left);
+    root.right = constructFromPrePost(pre_right,post_right);
     return root;
-
 };
